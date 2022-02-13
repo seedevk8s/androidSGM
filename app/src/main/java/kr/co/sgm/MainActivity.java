@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     MyDBHelper myHelper;
     EditText edtName, edtNumber, edtNameResult, edtNumberResult;
-    Button btnInit, btnInsert, btnSelect;
+    Button btnInit, btnInsert, btnSelect, btnUpdate, btnDelete;
     SQLiteDatabase sqlDB;
 
     public class MyDBHelper extends SQLiteOpenHelper {
@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
         btnInsert = (Button) findViewById(R.id.btnInsert);
         btnSelect = (Button) findViewById(R.id.btnSelect);
 
+        btnUpdate = findViewById(R.id.btnUpdate);
+        btnDelete = findViewById(R.id.btnDelete);
+
         myHelper = new MyDBHelper(this);
         btnInit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -71,6 +74,23 @@ public class MainActivity extends AppCompatActivity {
                 sqlDB.close();
                 Toast.makeText(getApplicationContext(), "입력됨",
                         Toast.LENGTH_SHORT).show();
+                btnSelect.callOnClick();        // OnClickListener 이벤트 호출
+            }
+        });
+
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sqlDB = myHelper.getWritableDatabase();
+                if (edtName.getText().toString() != "") {
+                    sqlDB.execSQL("DELETE FROM groupTBL WHERE gName = '"
+                            + edtName.getText().toString() + "';");
+
+                }
+                sqlDB.close();
+
+                Toast.makeText(getApplicationContext(), "삭제됨",
+                        Toast.LENGTH_SHORT).show();
+                btnSelect.callOnClick();
             }
         });
 
@@ -80,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 Cursor cursor;
                 cursor = sqlDB.rawQuery("SELECT * FROM groupTBL;", null);
 
-                String strNames = "그룹이름" + "\r\n" + "--------" + "\r\n";
+                String strNames = "그룹이름" + "\r\n" + "-----------------" + "\r\n";
                 String strNumbers = "인원" + "\r\n" + "--------" + "\r\n";
 
                 while (cursor.moveToNext()) {
@@ -95,5 +115,44 @@ public class MainActivity extends AppCompatActivity {
                 sqlDB.close();
             }
         });
+
+
+
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sqlDB = myHelper.getWritableDatabase();
+
+                if (edtName.getText().toString() != "") {
+                    sqlDB.execSQL("UPDATE groupTBL SET gNumber ="
+                            + edtNumber.getText() + " WHERE gName = '"
+                            + edtName.getText().toString() + "';");
+                }
+
+                sqlDB.close();
+
+                Toast.makeText(getApplicationContext(), "수정됨",
+                        Toast.LENGTH_SHORT).show();
+                btnSelect.callOnClick();
+            }
+        });
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
